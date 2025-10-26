@@ -4,160 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>鳴尾浜勤務連絡フォーム</title>
-    <style>
-        /* ページ全体のスタイル */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: sans-serif;
-            background-color: #f4f4f4;
-        }
-        /* コンテナ */
-        .container {
-            max-width: 600px;
-            margin: 40px auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 6px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        /* 見出し */
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #333;
-        }
-        /* ラベルと入力欄の行揃え */
-        .form-group {
-            margin-bottom: 15px;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .form-group label {
-            width: 100px;
-            margin-right: 10px;
-            font-weight: bold;
-        }
-        /* テキストやセレクトなどの要素 */
-        .form-group input[type="text"],
-        .form-group input[type="date"],
-        .form-group select,
-        .form-group textarea {
-            flex: 1;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
-        /* テキストエリアの高さ */
-        .form-group textarea {
-            height: 80px;
-            resize: vertical;
-        }
-        /* ボタン共通スタイル */
-        button {
-            padding: 10px 20px;
-            margin: 0;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        /* 送信ボタンのスタイル */
-        button[type="submit"] {
-            background: #007bff;
-            color: #fff;
-        }
-        button[type="submit"]:hover {
-            background: #0056b3;
-        }
-        /* シフト変更ボタンのスタイル */
-        .shift-change button {
-            background: #28A745;
-            color: #fff;
-        }
-        .shift-change button:hover {
-            background: #218838;
-        }
-        /* ボタンの左右配置 */
-        .button-wrapper {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-top: 30px;
-        }
-        /* シフト変更ボタンとテキストのラッパ */
-        .shift-change {
-            text-align: center;
-        }
-        .shift-change p {
-            margin-top: 8px;
-            color: gray;
-        }
-    </style>
 </head>
 <body>
-    
-    <div class="container">
-        <h1>勤務連絡フォーム</h1>
-        <form id="chatForm">
-            <div class="form-group">
-                <label for="employeeId">社員番号:</label>
-                <input type="text" id="employeeId" name="employeeId" required>
-            </div>
-            <div class="form-group">
-                <label for="employeeName">氏名:</label>
-                <input type="text" id="employeeName" name="employeeName" required>
-            </div>
-            <div class="form-group">
-                <label for="date">対象日付:</label>
-                <input type="date" id="date" name="date" required>
-            </div>
-            <div class="form-group">
-                <label for="status">ステータス:</label>
-                <select id="status" name="status" required>
-                    <option value="休み">休み</option>
-                    <option value="遅刻">遅刻</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="remarks">当欠理由:</label>
-                <textarea id="remarks" name="remarks" placeholder="理由を明確にしてご記載ください" required></textarea>
-            </div>
-            
-            <div class="button-wrapper">
-                <div>
-                    <button type="submit">送信</button>
-                </div>
-                <div class="shift-change">
-                    <button type="button" onclick="location.href='https://imaudo00.github.io/sihutohennkou/'">
-                        シフト変更
-                    </button>
-                    <p>シフト変更はこちら</p>
-                </div>
-            </div>
-        </form>
-    </div>
+    <h1>勤務連絡フォーム</h1>
+    <h1>鳴尾浜勤務連絡フォーム</h1>
+    <form id="chatForm">
+        <label for="employeeId">社員番号:</label>
+        <input type="text" id="employeeId" name="employeeId" required><br><br>
+
+        <label for="employeeName">氏名:</label>
+        <input type="text" id="employeeName" name="employeeName" required><br><br>
+
+        <label for="date">対象日付:</label>
+        <input type="date" id="date" name="date" required><br><br>
+
+        <label for="status">ステータス:</label>
+        <select id="status" name="status" required>
+            <option value="休み">休み</option>
+            <option value="遅刻">遅刻</option>
+        </select><br><br>
+
+        <label for="remarks">備考:</label><br>
+        <textarea id="remarks" name="remarks" rows="4" cols="50" placeholder="理由などを記載してください"></textarea><br><br>
+
+        <button type="submit">送信</button>
+    </form>
 
     <script>
-        // ページ読み込み時、対象日付を今日の日付に設定
-        window.onload = function() {
-            let today = new Date().toISOString().split('T')[0];
-            // IDが "date" の要素が複数あるとエラーになるため、HTML側を修正済み
-            const dateInput = document.getElementById("date");
-            if (dateInput) {
-                dateInput.value = today;
-            }
-        };
-
         document.getElementById('chatForm').addEventListener('submit', async function(event) {
             event.preventDefault();
 
-            const submitButton = document.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-            submitButton.textContent = "送信中..."; // 親切な表示
-
-            // 入力値の取得
+            // 必須項目の値を取得
             const employeeId = document.getElementById('employeeId').value.trim();
             const employeeName = document.getElementById('employeeName').value.trim();
             const date = document.getElementById('date').value.trim();
@@ -165,90 +42,28 @@
             const remarks = document.getElementById('remarks').value.trim();
 
             // 必須項目の検証
-            if (!employeeId || !employeeName || !date || !remarks) {
-                alert('必須項目が入力されていません。社員番号、氏名、対象日付、当欠理由を入力してください。');
-                submitButton.disabled = false;
-                submitButton.textContent = "送信";
+            if (!employeeId || !employeeName || !date) {
+                alert('必須項目が入力されていません。社員番号、氏名、対象日付を入力してください。');
                 return;
             }
 
-            // Google Chat に送信するメッセージを整形
+            const webhookUrl = 'https://chat.googleapis.com/v1/spaces/AAAA8EZygzI/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=kYGMhOZGDEScQGul5U7MKon7x0wMlZMVkEO5jXbVjaY'; // Webhook URLを設定
+
             const message = `勤務連絡\n社員番号: ${employeeId}\n氏名: ${employeeName}\n対象日付: ${date}\nステータス: ${status}\n備考: ${remarks || "なし"}`;
-            
-            // Webhook URL検出のための正規表現
-            const urlRegex = /(https?:\/\/[^\s]+)/;
 
-            // Google Chat のWebhook URL
-            const webhookUrl = 'https://chat.googleapis.com/v1/spaces/AAAA8EZygzI/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=kYGMhOZGDEScQGul5U7MKon7x0wMlZMVkEO5jXbVjaY';
-            
-            // TODO: ここにスプレッドシートのWebhook URL (GASのURL) を設定してください
-            const sheetsUrl = 'YOUR_SHEETS_URL_HERE'; 
-
-            // スプレッドシートに渡すデータ（payload）
-            const payload = { employeeId, employeeName, date, status, remarks };
-
-            // メッセージ中にURLが含まれていれば送信ブロック
-            if (urlRegex.test(message)) {
-                alert('メッセージにURLが含まれているため、送信できません。URLを削除してください。');
-                submitButton.disabled = false;
-                submitButton.textContent = "送信";
-                return;
-            }
-
-            // 各 fetch を個別に try-catch でエラーを捕捉
             try {
-                // Google Chat への送信
-                try {
-                    const chatRes = await fetch(webhookUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ text: message }),
-                    });
-                    if (!chatRes.ok) {
-                        console.error('Google Chat送信エラー:', chatRes.status);
-                    }
-                } catch (chatError) {
-                    console.error('Google Chat fetch エラー:', chatError);
-                }
-
-                // Google Sheets への送信（Content-Type を text/plain でプリフライト回避）
-                if (sheetsUrl === 'YOUR_SHEETS_URL_HERE') {
-                     console.warn('sheetsUrlが設定されていません。スプレッドシートへの送信をスキップします。');
-                } else {
-                    try {
-                        const sheetsRes = await fetch(sheetsUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'text/plain' },
-                            body: JSON.stringify(payload),
-                        });
-                        if (!sheetsRes.ok) {
-                            console.error('Google Sheets送信エラー:', sheetsRes.status);
-                        }
-                    } catch (sheetsError) {
-                        console.error('Google Sheets fetch エラー:', sheetsError);
-                    }
-                }
-
-                // 致命的なネットワークエラーがなければ、成功とみなす
-                alert('連絡内容が送信されました！');
-                
-                // フォームをリセット
-                document.getElementById('chatForm').reset();
-                // 日付もリセット後に再設定
-                let today = new Date().toISOString().split('T')[0];
-                document.getElementById("date").value = today;
-
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: message }),
+                });
+                alert('連絡内容がGoogle Chatに送信されました！');
             } catch (error) {
-                // 基本的に個別のtry-catchで捕捉されるが、念のため
-                console.error('全体の fetch エラー:', error);
-                alert('致命的なエラーが発生しました: ' + error.message);
-            } finally {
-                // 成功・失敗にかかわらず必ずボタンを戻す
-                submitButton.disabled = false;
-                submitButton.textContent = "送信";
+                alert('エラーが発生しました: ' + error.message);
             }
+
+            document.getElementById('chatForm').reset();
         });
     </script>
 </body>
 </html>
-
