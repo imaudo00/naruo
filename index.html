@@ -26,12 +26,15 @@
         <label for="remarks">備考:</label><br>
         <textarea id="remarks" name="remarks" rows="4" cols="50" placeholder="理由などを記載してください"></textarea><br><br>
 
-        <button type="submit">送信</button>
-    </form>
+        <button type="submit" id="submitButton">送信</button> </form>
 
     <script>
         document.getElementById('chatForm').addEventListener('submit', async function(event) {
             event.preventDefault();
+            
+            const submitButton = document.getElementById('submitButton');
+            submitButton.disabled = true; // 送信ボタンを無効化
+            submitButton.textContent = '送信中...';
 
             // 必須項目の値を取得
             const employeeId = document.getElementById('employeeId').value.trim();
@@ -43,27 +46,49 @@
             // 必須項目の検証
             if (!employeeId || !employeeName || !date) {
                 alert('必須項目が入力されていません。社員番号、氏名、対象日付を入力してください。');
+                submitButton.disabled = false;
+                submitButton.textContent = '送信';
                 return;
             }
 
-            const webhookUrl = 'https://chat.googleapis.com/v1/spaces/AAAA8EZygzI/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=kYGMhOZGDEScQGul5U7MKon7x0wMlZMVkEO5jXbVjaY'; // Webhook URLを設定
+            // ▼▼▼ ステップ2でコピーしたGASのウェブアプリURLに書き換えてください ▼▼▼
+            const gasWebAppUrl = 'https://script.google.com/macros/s/AKfycbxdHPNjDo_gGlJN7QGGiFVzl1NRKpQiWh-pD3IwLuRHbhGBU-_Idgh5z23KGhOIAn2kZQ/exec'; 
 
-            const message = `勤務連絡\n社員番号: ${employeeId}\n氏名: ${employeeName}\n対象日付: ${date}\nステータス: ${status}\n備考: ${remarks || "なし"}`;
+            // GASのdoPost(e)に送信するデータオブジェクト
+            const formData = {
+                employeeId: employeeId,
+                employeeName: employeeName,
+                date: date,
+                status: status,
+                remarks: remarks
+            };
 
             try {
-                await fetch(webhookUrl, {
+                const response = await fetch(gasWebAppUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: message }),
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8', // GASのdoPostで受けるためtext/plain推奨
+                    },
+                    body: JSON.stringify(formData),
+                    // mode: 'no-cors' は不要。GAS側でJSONを返せばOK
                 });
-                alert('連絡内容がGoogle Chatに送信されました！');
+                
+                const result = await response.json(); // GASからの応答をJSONとして解析
+
+                if (result.status === 'success') {
+                    alert('連絡内容が送信されました！ (スプレッドシートとGoogle Chat)');
+                    document.getElementById('chatForm').reset();
+                } else {
+                    throw new Error(result.message || '不明なエラーが発生しました。');
+                }
+
             } catch (error) {
                 alert('エラーが発生しました: ' + error.message);
+            } finally {
+                submitButton.disabled = false; // ボタンを再度有効化
+                submitButton.textContent = '送信';
             }
-
-            document.getElementById('chatForm').reset();
         });
     </script>
 </body>
 </html>
-
